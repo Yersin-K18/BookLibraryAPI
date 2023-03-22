@@ -20,7 +20,7 @@ jobs:
       run: dotnet restore
       
     - name: Build publish
-      run: dotnet publish -c Release -o './_build'
+      run: dotnet publish -c Release -p:UseAppHost=false -o './_build'
       
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
