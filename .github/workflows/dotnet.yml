@@ -1,3 +1,4 @@
+
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
@@ -20,7 +21,7 @@ jobs:
       run: dotnet restore
       
     - name: Build publish
-      run: dotnet publish -c Release -p:UseAppHost=false
+      run: dotnet publish -c Release -p:UseAppHost=false -o './_build'
       
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
@@ -28,5 +29,5 @@ jobs:
         server: win5227.site4now.net
         username: bookshopapi-001 
         password: ${{ secrets.ftp_password }}
-        local-dir: './obj/Release/net7.0/PubTmp/Out/'
+        local-dir: './_build/'
         server-dir: /bookshopapi/
