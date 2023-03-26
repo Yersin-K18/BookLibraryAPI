@@ -128,5 +128,19 @@ namespace BookLibraryAPI.Controllers
         {
             return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        [HttpGet("BestSellingProducts/{number}")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetBestSellingProducts(int number)
+        {
+            if (number < 0) return NotFound();
+            if (_context.Products == null)
+            {
+                return NotFound();
+            }
+            return await _context.Products
+                .OrderBy(item => item.Quantity)
+                .Take(number)
+                .ToListAsync();
+        }
     }
 }
