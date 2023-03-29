@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using BookLibraryAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BookLibraryAPI.Models;
 
 namespace BookLibraryAPI.Controllers
 {
@@ -24,10 +20,10 @@ namespace BookLibraryAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
         {
-          if (_context.Authors == null)
-          {
-              return NotFound();
-          }
+            if (_context.Authors == null)
+            {
+                return NotFound();
+            }
             return await _context.Authors.ToListAsync();
         }
 
@@ -35,10 +31,10 @@ namespace BookLibraryAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetAuthor(int id)
         {
-          if (_context.Authors == null)
-          {
-              return NotFound();
-          }
+            if (_context.Authors == null)
+            {
+                return NotFound();
+            }
             var author = await _context.Authors.FindAsync(id);
 
             if (author == null)
@@ -52,6 +48,7 @@ namespace BookLibraryAPI.Controllers
         // PUT: api/Authors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutAuthor(int id, Author author)
         {
             if (id != author.Id)
@@ -83,12 +80,13 @@ namespace BookLibraryAPI.Controllers
         // POST: api/Authors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Author>> PostAuthor(Author author)
         {
-          if (_context.Authors == null)
-          {
-              return Problem("Entity set 'BooklibraryContext.Authors'  is null.");
-          }
+            if (_context.Authors == null)
+            {
+                return Problem("Entity set 'BooklibraryContext.Authors'  is null.");
+            }
             _context.Authors.Add(author);
             try
             {
@@ -111,6 +109,7 @@ namespace BookLibraryAPI.Controllers
 
         // DELETE: api/Authors/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             if (_context.Authors == null)

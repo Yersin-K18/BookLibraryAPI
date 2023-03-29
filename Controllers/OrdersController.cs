@@ -1,4 +1,5 @@
 ﻿using BookLibraryAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,7 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/Orders
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
             if (_context.Orders == null)
@@ -28,6 +30,7 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
             if (_context.Orders == null)
@@ -47,6 +50,7 @@ namespace BookLibraryAPI.Controllers
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.Id)
@@ -78,6 +82,7 @@ namespace BookLibraryAPI.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
             if (_context.Orders == null)
@@ -106,6 +111,7 @@ namespace BookLibraryAPI.Controllers
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             if (_context.Orders == null)
