@@ -1,5 +1,7 @@
+using BookLibraryAPI.Data;
 using BookLibraryAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -13,6 +15,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Book")
+    .AddEntityFrameworkStores<BookAuthDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(option =>
+{
+    option.Password.RequireDigit = false;
+    option.Password.RequireLowercase = false;
+    option.Password.RequireUppercase = false;
+    option.Password.RequireNonAlphanumeric = false;
+    option.Password.RequiredLength = 8;
+    option.Password.RequiredUniqueChars = 1;
+});
+
 builder.Services.AddAuthentication(option =>
 {
     option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -22,7 +39,7 @@ builder.Services.AddAuthentication(option =>
 {
     option.RequireHttpsMetadata = true;
     option.SaveToken = true;
-    option.TokenValidationParameters = new TokenValidationParameters
+    option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]!)),
@@ -34,6 +51,11 @@ builder.Services.AddAuthentication(option =>
 builder.Services.AddDbContext<BooklibraryContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("BookLibrary"));
+});
+
+builder.Services.AddDbContext<BookAuthDbContext>(option =>
+{
+    option.UseSqlServer(builder.Configuration.GetConnectionString("BookAuthContext"));
 });
 
 var app = builder.Build();
