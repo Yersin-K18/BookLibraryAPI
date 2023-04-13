@@ -1,26 +1,63 @@
 ﻿using BookLibraryAPI.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc; using Microsoft.IdentityModel.Tokens; using System.IdentityModel.Tokens.Jwt; using System.Security.Claims; using System.Text;  namespace BookLibraryAPI.Controllers {     [Route("[controller]")]
-    [ApiController]     public class AuthController : Controller     {
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace BookLibraryAPI.Controllers
+{
+    [Route("[controller]")]
+    [ApiController]
+    public class AuthController : Controller
+    {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration configuration;
 
-        public AuthController(IConfiguration configuration, UserManager<IdentityUser> userManager)
+        public AuthController(IConfiguration configuration, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             this.configuration = configuration;
             _userManager = userManager;
-        }          private String GetToken(string id)         {             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:SecretKey"]!));             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256Signature);             List<Claim> Claims = new List<Claim>()
+            _signInManager = signInManager;
+        }
+
+        private String GetToken(string id)
+        {
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:SecretKey"]!));
+            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256Signature);
+            List<Claim> Claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };              var tokenOptions = new JwtSecurityToken(                 issuer: configuration["JWT:ValidateIssuer"],                 audience: configuration["JWT:ValidAudience"],                 claims: Claims,                 expires: DateTime.Now.AddDays(7),                 signingCredentials: signinCredentials             );              return new JwtSecurityTokenHandler().WriteToken(tokenOptions);         }          [HttpPost("login")]
-        public async Task<IActionResult> Login(string id, string password)
+            };
+
+            var tokenOptions = new JwtSecurityToken(
+                issuer: configuration["JWT:ValidateIssuer"],
+                audience: configuration["JWT:ValidAudience"],
+                claims: Claims,
+                expires: DateTime.Now.AddDays(7),
+                signingCredentials: signinCredentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(string username, string password)
         {
-            var loginResule = await _userManager.FindByLoginAsync(id, password);
+            var result = await _signInManager.PasswordSignInAsync(username, password, false, false);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { message = "Invalid username or password" });
+            }
 
             return Ok(new
             {
-                message = "Halo"
+                message = "Halo " + username,
+                token = this.GetToken(username)
             });
         }
 
@@ -50,4 +87,6 @@ using Microsoft.AspNetCore.Mvc; using Microsoft.IdentityModel.Tokens; using 
             var modelErrors = ModelState.Values.SelectMany(v => v.Errors)
                                                 .Select(e => e.ErrorMessage);
             return BadRequest(new { errors = modelErrors });
-        }     } } 
+        }
+    }
+}
