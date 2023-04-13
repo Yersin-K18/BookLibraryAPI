@@ -47,6 +47,22 @@ namespace BookLibraryAPI.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "3af66078-e066-41d1-b87a-df3a90361536",
+                            ConcurrencyStamp = "3af66078-e066-41d1-b87a-df3a90361536",
+                            Name = "Read",
+                            NormalizedName = "READ"
+                        },
+                        new
+                        {
+                            Id = "7b8d7d39-e0a7-4fc2-89f9-a64545369fde",
+                            ConcurrencyStamp = "7b8d7d39-e0a7-4fc2-89f9-a64545369fde",
+                            Name = "Write",
+                            NormalizedName = "WRITE"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -18,7 +18,7 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/Users
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Write")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             if (_context.Users == null)

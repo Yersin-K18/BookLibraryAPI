@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace BookLibraryAPI.Migrations
 {
     /// <inheritdoc />
@@ -154,6 +156,15 @@ namespace BookLibraryAPI.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "3af66078-e066-41d1-b87a-df3a90361536", "3af66078-e066-41d1-b87a-df3a90361536", "Read", "READ" },
+                    { "7b8d7d39-e0a7-4fc2-89f9-a64545369fde", "7b8d7d39-e0a7-4fc2-89f9-a64545369fde", "Write", "WRITE" }
                 });
 
             migrationBuilder.CreateIndex(
