@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,26 +21,26 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<BookAuthDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.Configure<IdentityOptions>(option =>
+builder.Services.Configure<IdentityOptions>(options =>
 {
-    option.Password.RequireDigit = false;
-    option.Password.RequireLowercase = false;
-    option.Password.RequireUppercase = false;
-    option.Password.RequireNonAlphanumeric = false;
-    option.Password.RequiredLength = 8;
-    option.Password.RequiredUniqueChars = 1;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 8;
+    options.Password.RequiredUniqueChars = 1;
 });
 
-builder.Services.AddAuthentication(option =>
+builder.Services.AddAuthentication(options =>
 {
-    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(option =>
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
 {
-    option.RequireHttpsMetadata = true;
-    option.SaveToken = true;
-    option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    options.RequireHttpsMetadata = true;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]!)),
@@ -48,21 +49,54 @@ builder.Services.AddAuthentication(option =>
     };
 });
 
-builder.Services.AddDbContext<BooklibraryContext>(option =>
+builder.Services.AddDbContext<BooklibraryContext>(options =>
 {
-    option.UseSqlServer(builder.Configuration.GetConnectionString("BookLibrary"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BookLibrary"));
 });
 
-builder.Services.AddDbContext<BookAuthDbContext>(option =>
+builder.Services.AddDbContext<BookAuthDbContext>(options =>
 {
-    option.UseSqlServer(builder.Configuration.GetConnectionString("BookAuthContext"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BookAuthContext"));
+});
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
+        }
+    });
 });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "BookAPI");
+});
 
 app.UseCors(policy =>
 {
