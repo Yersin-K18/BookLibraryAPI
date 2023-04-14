@@ -33,8 +33,13 @@ namespace BookLibraryAPI.Controllers
             List<Claim> Claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, id),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            var roles = _userManager.GetRolesAsync(_userManager.FindByNameAsync(id).Result!).Result;
+            foreach (var role in roles)
+            {
+                Claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var tokenOptions = new JwtSecurityToken(
                 issuer: configuration["JWT:ValidateIssuer"],
@@ -100,7 +105,7 @@ namespace BookLibraryAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "write")]
+        [Authorize(Roles = "Write")]
         public async Task<IActionResult> GiveRole(string id, string role)
         {
             IdentityUser? user = await _userManager.FindByIdAsync(id);
