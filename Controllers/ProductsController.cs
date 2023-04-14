@@ -29,6 +29,7 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "read")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             if (_context.Products == null)
@@ -109,7 +110,7 @@ namespace BookLibraryAPI.Controllers
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "write")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             if (_context.Products == null)

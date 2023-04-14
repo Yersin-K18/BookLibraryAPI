@@ -1,4 +1,5 @@
 ﻿using BookLibraryAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -14,13 +15,15 @@ namespace BookLibraryAPI.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration configuration;
 
-        public AuthController(IConfiguration configuration, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthController(IConfiguration configuration, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             this.configuration = configuration;
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         private String GetToken(string id)
@@ -87,6 +90,47 @@ namespace BookLibraryAPI.Controllers
             var modelErrors = ModelState.Values.SelectMany(v => v.Errors)
                                                 .Select(e => e.ErrorMessage);
             return BadRequest(new { errors = modelErrors });
+        }
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok(new { message = "Logout successfully." });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "write")]
+        public async Task<IActionResult> GiveRole(string id, string role)
+        {
+            IdentityUser? user = await _userManager.FindByIdAsync(id);
+
+            if (user is null)
+            {
+                return BadRequest(new
+                {
+                    message = "Not found " + id
+                });
+            }
+
+            if (!await _roleManager.RoleExistsAsync(role))
+            {
+                return BadRequest(new
+                {
+                    message = role + " not exists!"
+                });
+            }
+
+            IdentityResult result = await _userManager.AddToRoleAsync(user, role);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { message = "Failed to add user to role" });
+            }
+
+            return Ok(new
+            {
+                message = id + " has been added to " + role
+            });
         }
     }
 }
