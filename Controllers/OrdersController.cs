@@ -134,5 +134,21 @@ namespace BookLibraryAPI.Controllers
         {
             return (_context.Orders?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        [HttpGet("{customerId}/orderdetails")]
+        public ActionResult<IEnumerable<OrderDetail>> GetOrderDetails(int customerId)
+        {
+            var orderDetails = _context.OrderDetails
+                .Where(od => od.Order.UserId == customerId)
+                .ToList();
+
+            if (orderDetails.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return orderDetails;
+
+        }
     }
 }
