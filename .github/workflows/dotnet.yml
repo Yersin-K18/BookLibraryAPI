@@ -28,8 +28,8 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
-        server: win5227.site4now.net
-        username: bookshopapi-001 
+        server: ftp://155.254.244.40/www.yersinK18.somee.com
+        username: hoang3409 
         password: ${{ secrets.ftp_password }}
         local-dir: './_build/'
-        server-dir: /bookshopapi/
+        server-dir: d:/DZHosts/LocalUser/hoang3409/www.yersinK18.somee.com/
