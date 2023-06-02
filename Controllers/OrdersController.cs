@@ -129,6 +129,21 @@ namespace BookLibraryAPI.Controllers
 
             return NoContent();
         }
+        [HttpGet("{userId}/orderdetails")]
+        [Authorize]
+        public ActionResult<IEnumerable<OrderDetail>> GetOrderDetails(int userId)
+        {
+            var orderDetails = _context.OrderDetails
+                .Where(od => od.Order.UserId== userId)
+                .ToList();
+
+            if (orderDetails.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return orderDetails;
+        }
 
         private bool OrderExists(int id)
         {
