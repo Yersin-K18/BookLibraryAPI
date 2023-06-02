@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging;
+using static NuGet.Packaging.PackagingConstants;
 
 namespace BookLibraryAPI.Controllers
 {
@@ -129,21 +131,23 @@ namespace BookLibraryAPI.Controllers
 
             return NoContent();
         }
-        [HttpGet("{userId}/orderdetails")]
-        [Authorize]
-        public ActionResult<IEnumerable<OrderDetail>> GetOrderDetails(int userId)
+
+        [HttpGet("user/{userId}")] 
+        public ActionResult<IEnumerable<Order>> GetOrdersByUserId(int userId)
         {
-            var orderDetails = _context.OrderDetails
-                .Where(od => od.Order.UserId== userId)
+            List<Order> orders = _context.Orders
+                .Include(o => o.OrderDetails)
+                .Where(o => o.UserId == userId)
                 .ToList();
 
-            if (orderDetails.Count == 0)
+            if (orders == null)
             {
                 return NotFound();
             }
 
-            return orderDetails;
+            return Ok(orders);
         }
+
 
         private bool OrderExists(int id)
         {
