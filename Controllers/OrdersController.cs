@@ -129,7 +129,21 @@ namespace BookLibraryAPI.Controllers
 
             return NoContent();
         }
+        [HttpGet("GetOrdersByUserId/{userId}")]
+        public ActionResult<IEnumerable<Order>> GetOrdersByUserId(int userId)
+        {
+            List<Order> orders = _context.Orders
+                .Include(o => o.OrderDetails)
+                .Where(o => o.UserId == userId)
+                .ToList();
 
+            if (orders == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(orders);
+        }
         private bool OrderExists(int id)
         {
             return (_context.Orders?.Any(e => e.Id == id)).GetValueOrDefault();
