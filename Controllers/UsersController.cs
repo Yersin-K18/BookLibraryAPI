@@ -1,7 +1,9 @@
 ﻿using BookLibraryAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace BookLibraryAPI.Controllers
 {
@@ -10,10 +12,12 @@ namespace BookLibraryAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly BooklibraryContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public UsersController(BooklibraryContext context)
+        public UsersController(BooklibraryContext context,UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/Users
@@ -83,6 +87,7 @@ namespace BookLibraryAPI.Controllers
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<User>> PostUser(User user)
+
         {
             if (_context.Users == null)
             {
@@ -104,6 +109,8 @@ namespace BookLibraryAPI.Controllers
                     throw;
                 }
             }
+            await _userManager.AddToRoleAsync(user, "Read");
+            var userInfo = await _userManager.GetUserAsync(HttpContext.User);
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }

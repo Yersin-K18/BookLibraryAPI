@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace BookLibraryAPI.Models;
 
-public partial class User
+public partial class User 
 {
     public int Id { get; set; }
 
