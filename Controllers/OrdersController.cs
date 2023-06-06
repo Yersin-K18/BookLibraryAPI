@@ -129,7 +129,7 @@ namespace BookLibraryAPI.Controllers
 
             return NoContent();
         }
-        [HttpGet("user/{userId}")]
+        [HttpGet("GetOrdersByUserId/{userId}")]
         public ActionResult<IEnumerable<Order>> GetOrdersByUserId(int userId)
         {
             List<Order> orders = _context.Orders
