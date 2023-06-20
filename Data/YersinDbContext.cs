@@ -340,9 +340,11 @@ public partial class YersinDbContext : DbContext
 
         modelBuilder.Entity<VisitorStatistic>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id).HasName("PK__VisitorS__3214EC27440682E6");
 
-            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("ID");
             entity.Property(e => e.IpAddress)
                 .HasMaxLength(50)
                 .IsUnicode(false)
