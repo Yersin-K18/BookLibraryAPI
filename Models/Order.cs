@@ -7,17 +7,25 @@ public partial class Order
 {
     public int Id { get; set; }
 
-    public DateTime DateOrder { get; set; }
+    public string CustomerName { get; set; } = null!;
 
-    public decimal Total { get; set; }
+    public string CustomerAddress { get; set; } = null!;
 
-    public double? Discount { get; set; }
+    public string CustomerEmail { get; set; } = null!;
 
-    public int? UserId { get; set; }
+    public string CustomerMobile { get; set; } = null!;
 
-    public string Address { get; set; } = null!;
+    public string? CustomerMassage { get; set; }
 
-    public virtual ICollection<OrderDetail> OrderDetails { get; } = new List<OrderDetail>();
+    public DateTime? CreateDate { get; set; }
 
-    public virtual User? User { get; set; }
+    public string? CreateBy { get; set; }
+
+    public string? PaymentMethod { get; set; }
+
+    public string? PaymenStatus { get; set; }
+
+    public bool Status { get; set; }
+
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 }
