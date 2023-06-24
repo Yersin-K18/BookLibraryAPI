@@ -1,7 +1,10 @@
 ﻿using BookLibraryAPI.Models;
+using BookLibraryAPI.Models.DTO;
+using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BookLibraryAPI.Controllers
 {
@@ -11,124 +14,44 @@ namespace BookLibraryAPI.Controllers
     {
         private readonly BooklibraryContext _context;
 
-        public ProductsController(BooklibraryContext context)
+        private readonly IProductRepository _productRepository;
+        public ProductsController(BooklibraryContext dbContext, IProductRepository productRepository)
         {
-            _context = context;
+            _context = dbContext;
+            _productRepository = productRepository;
         }
-
-        // GET: api/Products
+        [HttpGet("get-all-Product")]
+        public IActionResult GetAll()
+        {
+            // su dung reposity pattern 
+            var allproducts = _productRepository.GetAllProduct();
+            return Ok(allproducts);
+        }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        [Route("get-product-by-id/{id}")]
+        public IActionResult GetBookById([FromRoute] int id)
         {
-            if (_context.Products == null)
-            {
-                return NotFound();
-            }
-            return await _context.Products.ToListAsync();
+            var productWithDTO = _productRepository.GetProductById(id);
+            return Ok(productWithDTO);
         }
-
-        // GET: api/Products/5
-        [HttpGet("{id}")]
-        [Authorize(Roles = "read")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        [HttpPost("Add Product")]
+        public IActionResult AddBook([FromBody] AddProductDTO addproductRequestDTO)
         {
-            if (_context.Products == null)
-            {
-                return NotFound();
-            }
-            var product = await _context.Products.FindAsync(id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return product;
+            var productAdd = _productRepository.AddProduct(addproductRequestDTO);
+            return Ok(productAdd);
         }
-
-        // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        [HttpPut("update-Product-by-id/{id}")]
+        public IActionResult UpdateBookById(int id, [FromBody] AddProductDTO productDTO)
         {
-            if (id != product.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var updateProduct = _productRepository.UpdateProductById(id, productDTO);
+            return Ok(productDTO);
         }
-
-        // POST: api/Products
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        [Authorize]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        [HttpDelete("delete-Product-by-id/{id}")]
+        public IActionResult DeleteBookById(int id)
         {
-            if (_context.Products == null)
-            {
-                return Problem("Entity set 'BooklibraryContext.Products'  is null.");
-            }
-            _context.Products.Add(product);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ProductExists(product.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            var deleteProduct = _productRepository.DeleteProductById(id);
+            return Ok(deleteProduct);
         }
-
-        // DELETE: api/Products/5
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "write")]
-        public async Task<IActionResult> DeleteProduct(int id)
-        {
-            if (_context.Products == null)
-            {
-                return NotFound();
-            }
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
         private bool ProductExists(int id)
         {
             return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
