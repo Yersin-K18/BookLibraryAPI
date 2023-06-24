@@ -1,4 +1,7 @@
-﻿using BookLibraryAPI.Models;
+﻿using BookLibraryAPI.Data;
+using BookLibraryAPI.Models;
+using BookLibraryAPI.Models.DTO;
+using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,122 +13,55 @@ namespace BookLibraryAPI.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly BooklibraryContext _context;
-
-        public CategoriesController(BooklibraryContext context)
+        private readonly ICategoryRepository _categoryRepository;
+        public CategoriesController(BooklibraryContext context, ICategoryRepository categoryRepository)
         {
             _context = context;
+            _categoryRepository = categoryRepository;
         }
 
         // GET: api/Categories
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        [HttpGet("get-all-category")]
+        public IActionResult GetAllCategory()
         {
-            if (_context.Categories == null)
-            {
-                return NotFound();
-            }
-            return await _context.Categories.ToListAsync();
+            var categories = _categoryRepository.GetAllCategories();
+            return Ok(categories);
         }
 
         // GET: api/Categories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        [HttpGet("category-by-id/{id}")]
+        public IActionResult GetCategoryById(int id)
         {
-            if (_context.Categories == null)
-            {
-                return NotFound();
-            }
-            var category = await _context.Categories.FindAsync(id);
+            var categoryWithId = _categoryRepository.GetCategoryById(id); 
 
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            return category;
+            return Ok(categoryWithId);
         }
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> PutCategory(int id, Category category)
+        [HttpPut("update-category-by/{id}")]
+        public IActionResult UpdateCategoryById(int id, CategoriesNoIdDTO category)
         {
-            if (id != category.Id)
-            {
-                return BadRequest();
-            }
+            var categoryUpdate = _categoryRepository.UpdateCategoryById(id, category);
 
-            _context.Entry(category).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(categoryUpdate);
         }
 
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        [Authorize]
-        public async Task<ActionResult<Category>> PostCategory(Category category)
+        [HttpPost("add-category")]
+        public IActionResult AddCategory(AddCategoriesRequestDTO addCategoryRequestDTO)
         {
-            if (_context.Categories == null)
-            {
-                return Problem("Entity set 'BooklibraryContext.Categories'  is null.");
-            }
-            _context.Categories.Add(category);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (CategoryExists(category.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
+            var addCategory = _categoryRepository.AddCategory(addCategoryRequestDTO);
+            return Ok(addCategory);
         }
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
-        [Authorize]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public IActionResult DeleteCategoryById(int id)
         {
-            if (_context.Categories == null)
-            {
-                return NotFound();
-            }
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var CategoryisDeteled = _categoryRepository.GetCategoryById(id);
+            return Ok(CategoryisDeteled);
         }
 
         private bool CategoryExists(int id)
