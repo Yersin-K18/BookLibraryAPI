@@ -1,7 +1,10 @@
 ﻿using BookLibraryAPI.Models;
+using BookLibraryAPI.Models.DTO;
+using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BookLibraryAPI.Controllers
 {
@@ -10,127 +13,45 @@ namespace BookLibraryAPI.Controllers
     public class AuthorsController : ControllerBase
     {
         private readonly BooklibraryContext _context;
+        private readonly IAuthorRepository _authorRepository;
 
-        public AuthorsController(BooklibraryContext context)
+        public AuthorsController(BooklibraryContext dbContext,IAuthorRepository
+       authorRepository)
         {
-            _context = context;
+            _context = dbContext;
+            _authorRepository = authorRepository;
         }
-
-        // GET: api/Authors
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+        [HttpGet("get-all-Authors")]
+        public IActionResult GetAllUser()
         {
-            if (_context.Authors == null)
-            {
-                return NotFound();
-            }
-            return await _context.Authors.ToListAsync();
+            var allAuthor = _authorRepository.GetAllAuthor();
+            return Ok(allAuthor);
         }
-
-        // GET: api/Authors/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthor(int id)
+        [HttpGet("get-authors-by-id/{id}")]
+        public IActionResult GetAuthorById(int id)
         {
-            if (_context.Authors == null)
-            {
-                return NotFound();
-            }
-            var author = await _context.Authors.FindAsync(id);
-
-            if (author == null)
-            {
-                return NotFound();
-            }
-
-            return author;
+            var AuthorbyID = _authorRepository.GetAuthorById(id);
+            return Ok(AuthorbyID);
         }
-
-        // PUT: api/Authors/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> PutAuthor(int id, Author author)
+        [HttpPost("add-Author")]
+        public IActionResult AddUser([FromBody] AddAuthorDTO
+       addAuthorDTO)
         {
-            if (id != author.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(author).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AuthorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var addAuthor = _authorRepository.AddAuthor(addAuthorDTO);
+            return Ok();
         }
-
-        // POST: api/Authors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        [Authorize]
-        public async Task<ActionResult<Author>> PostAuthor(Author author)
+        [HttpPut("update-Author-by-id/{id}")]
+        public IActionResult UpdateAuthorById(int id, [FromBody] AuthorNoIdDTO
+       authorDTO)
         {
-            if (_context.Authors == null)
-            {
-                return Problem("Entity set 'BooklibraryContext.Authors'  is null.");
-            }
-            _context.Authors.Add(author);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (AuthorExists(author.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
+            var authorUpdate = _authorRepository.UpdateAuthor(id, authorDTO);
+            return Ok(authorUpdate);
         }
-
-        // DELETE: api/Authors/5
-        [HttpDelete("{id}")]
-        [Authorize]
-        public async Task<IActionResult> DeleteAuthor(int id)
+        [HttpDelete("delete-author-by-id/{id}")]
+        public IActionResult DeleteAuthorById(int id)
         {
-            if (_context.Authors == null)
-            {
-                return NotFound();
-            }
-            var author = await _context.Authors.FindAsync(id);
-            if (author == null)
-            {
-                return NotFound();
-            }
-
-            _context.Authors.Remove(author);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool AuthorExists(int id)
-        {
-            return (_context.Authors?.Any(e => e.Id == id)).GetValueOrDefault();
+            var userDelete = _authorRepository.DeleteAuthorById(id);
+            return Ok();
         }
     }
 }
