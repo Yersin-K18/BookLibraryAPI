@@ -51,7 +51,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddDbContext<BooklibraryContext>(options =>
 {
-    options.UseMySql(builder.Configuration.GetConnectionString("BookLibrary"), Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.6-mysql"));
+    options.UseMySql(builder.Configuration.GetConnectionString("BookLibrary"), ServerVersion.Parse("10.6-mysql"));
 });
 
 builder.Services.AddDbContext<BookAuthDbContext>(options =>
