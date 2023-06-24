@@ -1,5 +1,5 @@
 using BookLibraryAPI.Data;
-using BookLibraryAPI.Models;
+using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +9,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Add serveces to controllers
+builder.Services.AddControllers();
+
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddScoped<IUserRepository, SQLUserRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

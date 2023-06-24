@@ -1,4 +1,7 @@
-﻿using BookLibraryAPI.Models;
+﻿using BookLibraryAPI.Data;
+using BookLibraryAPI.Models;
+using BookLibraryAPI.Models.DTO;
+using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,123 +13,58 @@ namespace BookLibraryAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly BooklibraryContext _context;
-
-        public UsersController(BooklibraryContext context)
+        private readonly IUserRepository _userRepository;
+        public UsersController(BooklibraryContext context, IUserRepository userRepository)
         {
             _context = context;
+            _userRepository = userRepository;
         }
 
         // GET: api/Users
         [HttpGet]
-        [Authorize(Roles = "Write")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public IActionResult GetAllUsers()
         {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
-            return await _context.Users.ToListAsync();
+            var allUsers = _userRepository.GetAllUser();
+            return Ok(allUsers);
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public IActionResult GetUserById(int id)
         {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            var userWirhIdDTO = _userRepository.GetUserById(id);
+            return Ok(userWirhIdDTO);
         }
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        [HttpPut("update-user-by-id/{id}")]
+        public IActionResult UpdateUserById(int id, UserNoIdDTO userDTO)
         {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
+            var updateUser = _userRepository.UpdateUserById(id, userDTO);
+            return Ok(updateUser);
 
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
+            
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("add-user")]
         [Authorize]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public IActionResult AddUser(UserNoIdDTO userDTO)
         {
-            if (_context.Users == null)
-            {
-                return Problem("Entity set 'BooklibraryContext.Users'  is null.");
-            }
-            _context.Users.Add(user);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (UserExists(user.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            var addUser = _userRepository.AddUser(userDTO);
+            return Ok(addUser);
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete-user-by-id/{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteUser(int id)
+        public IActionResult DeleteUserById(int id)
         {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var deleteUser = _userRepository.DeleteById(id);
+            return Ok(deleteUser);
         }
 
         private bool UserExists(int id)
