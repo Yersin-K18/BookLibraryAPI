@@ -49,7 +49,6 @@ namespace BookLibraryAPI.Controllers
         // PUT: api/Authors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> PutAuthor(int id, Author author)
         {
             if (id != author.Id)
@@ -81,7 +80,6 @@ namespace BookLibraryAPI.Controllers
         // POST: api/Authors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<Author>> PostAuthor(Author author)
         {
             if (_context.Authors == null)
@@ -110,7 +108,6 @@ namespace BookLibraryAPI.Controllers
 
         // DELETE: api/Authors/5
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             if (_context.Authors == null)

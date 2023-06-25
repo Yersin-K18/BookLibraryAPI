@@ -1,4 +1,4 @@
-﻿using BookLibraryAPI.Data;
+using BookLibraryAPI.Data;
 using BookLibraryAPI.Models;
 using BookLibraryAPI.Models.DTO;
 using BookLibraryAPI.Repositories;
@@ -22,7 +22,7 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public IActionResult GetAllUsers()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             var allUsers = _userRepository.GetAllUser();
             return Ok(allUsers);
@@ -30,7 +30,7 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public IActionResult GetUserById(int id)
+        public async Task<ActionResult<User>> GetUser(int id)
         {
             var userWirhIdDTO = _userRepository.GetUserById(id);
             return Ok(userWirhIdDTO);
