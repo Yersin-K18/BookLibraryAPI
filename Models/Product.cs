@@ -1,7 +1,10 @@
-﻿namespace BookLibraryAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookLibraryAPI.Models;
 
 public partial class Product
 {
+    [Key]
     public int Id { get; set; }
 
     public string? Name { get; set; }

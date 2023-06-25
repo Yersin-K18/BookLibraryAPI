@@ -1,4 +1,4 @@
-﻿
+﻿using BookLibraryAPI.Models;
 using BookLibraryAPI.Models.DTO;
 using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;

@@ -13,26 +13,24 @@ namespace BookLibraryAPI.Repositories
             {
                 _context = dbContext;
             }
-            public AddProductDTO AddProduct(AddProductDTO addProductDTO)
+        public AddProductDTO AddProduct(AddProductDTO addProductDTO)
+        {
+            var productmodels = new Product
             {
-                var productmodels = new Product
-                {
-                    Name = addProductDTO.Name,
-                    Description = addProductDTO.Description,
-                    Price = addProductDTO.Price,
-                    Language = addProductDTO.Language,
-                    Image = addProductDTO.Image,
-                    Quantity = addProductDTO.Quantity,
-                    AuthorId = addProductDTO.AuthorId,
-                    CategorieId = addProductDTO.CategorieId,
-                };
+                Name = addProductDTO.Name,
+                Description = addProductDTO.Description,
+                Price = addProductDTO.Price,
+                Quantity = addProductDTO.Quantity,
+                AuthorId = addProductDTO.AuthorId,
+                CategorieId = addProductDTO.CategorieId,
                 //Use Domain Model to add Book
+            };
                 _context.Products.Add(productmodels);
                 _context.SaveChanges();
-                return addProductDTO;
-            }
+            return addProductDTO;
+        }
 
-            public Product? DeleteProductById(int id)
+        public Product? DeleteProductById(int id)
             {
                 var bookDomain = _context.Products.FirstOrDefault(n => n.Id == id);
                 if (bookDomain != null)
@@ -48,6 +46,7 @@ namespace BookLibraryAPI.Repositories
             {
                 var AllProduct = _context.Products.Select(product => new ProductDTO()
                 {
+                    Id = product.Id,
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
@@ -77,7 +76,6 @@ namespace BookLibraryAPI.Repositories
                     CategoriesName = product.Categorie.Name,
                 }).FirstOrDefault();
                 return productwithDTO;
-
             }
 
             public AddProductDTO? UpdateProductById(int id, AddProductDTO productDTO)
@@ -94,8 +92,11 @@ namespace BookLibraryAPI.Repositories
                     ProductModels.AuthorId = productDTO.AuthorId;
                     ProductModels.CategorieId = productDTO.CategorieId;
                     _context.SaveChanges();
-
-                };
+                }
+            else
+            {
+                Console.WriteLine("chưa cập nhật thành công");
+            }
                 return productDTO;
 
             }
