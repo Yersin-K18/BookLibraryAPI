@@ -1,7 +1,7 @@
 ﻿using Microsoft.Build.Framework;
 using System.ComponentModel.DataAnnotations;
 
-namespace BookLibraryAPI.Models
+namespace BookLibraryAPI.Models.Domain
 {
     public class RegisterViewModel
     {

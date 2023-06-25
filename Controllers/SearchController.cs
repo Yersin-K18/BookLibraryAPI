@@ -14,6 +14,17 @@ namespace BookLibraryAPI.Controllers
         {
             _context = context;
         }
+        [HttpGet("products")]
+        public IActionResult GetProductsByAuthor(string author)
+        {
+            var searchResults = _context.Products
+           .Where(p => p.Author.Name.Contains(author) || p.Author.Nickname.Contains(author))
+            .ToList();
+            if (searchResults.Count == 0) {
+                return NotFound("Không tìm thấy sản phẩm ");
+            }
+            return Ok(searchResults);
+        }
         [HttpGet("searchProduct")]
         public IActionResult searchPruduct(string keyword)
         {

@@ -16,15 +16,15 @@ builder.Services.AddControllers();
 
 // Add services to the container.
 
-builder.Services.AddScoped<IUserRepository, SQLUserRepository>();
-builder.Services.AddScoped<ICategoryRepository, SQLCategoryRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Book")
     .AddEntityFrameworkStores<BookAuthDbContext>()
