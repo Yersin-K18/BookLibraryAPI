@@ -1,7 +1,7 @@
 ﻿using BookLibraryAPI.Models.DTO;
-using BookLibraryAPI.Models;
 using BookLibraryAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using BookLibraryAPI.Models.Domain;
 
 namespace BookLibraryAPI.Repositories
 {

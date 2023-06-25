@@ -1,5 +1,5 @@
 using BookLibraryAPI.Data;
-using BookLibraryAPI.Models;
+using BookLibraryAPI.Models.Domain;
 using BookLibraryAPI.Models.DTO;
 using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -36,13 +36,13 @@ namespace BookLibraryAPI.Controllers
             return Ok(productWithDTO);
         }
         [HttpPost()]
-        public IActionResult AddBook([FromBody] AddProductDTO addproductRequestDTO)
+        public IActionResult AddBook([FromBody] AddProductRequestDTO addproductRequestDTO)
         {
             var productAdd = _productRepository.AddProduct(addproductRequestDTO);
             return Ok(productAdd);
         }
         [HttpPut("{id}")]
-        public IActionResult UpdateBookById(int id, [FromBody] AddProductDTO productDTO)
+        public IActionResult UpdateBookById(int id, [FromBody] AddProductRequestDTO productDTO)
         {
             var updateProduct = _productRepository.UpdateProductById(id, productDTO);
             return Ok(productDTO);
