@@ -1,8 +1,11 @@
 ﻿using BookLibraryAPI.Data;
 using BookLibraryAPI.Models;
+using BookLibraryAPI.Models.DTO;
+using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 
 namespace BookLibraryAPI.Controllers
 {
@@ -11,140 +14,62 @@ namespace BookLibraryAPI.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly BooklibraryContext _context;
-
-        public OrdersController(BooklibraryContext context)
+        private readonly IOrderRepository _IorderRepository;
+        public OrdersController(BooklibraryContext context, IOrderRepository orderRepository)
         {
             _context = context;
+            _IorderRepository = orderRepository;
         }
 
         // GET: api/Orders
         [HttpGet]
         
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
+        public IActionResult GetOrders()
         {
-            if (_context.Orders == null)
-            {
-                return NotFound();
-            }
-            return await _context.Orders.ToListAsync();
+            var allOrders = _IorderRepository.GetAllOrder();
+            return Ok(allOrders);
         }
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
         
-        public async Task<ActionResult<Order>> GetOrder(int id)
+        public IActionResult GetOrder(int id)
         {
-            if (_context.Orders == null)
-            {
-                return NotFound();
-            }
-            var order = await _context.Orders.FindAsync(id);
-
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            return order;
+            var Order = _IorderRepository.GetOderById(id);
+            return Ok(Order);
         }
 
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         
-        public async Task<IActionResult> PutOrder(int id, Order order)
+        public IActionResult PutOrder( int id, OrderNoIdDTO order)
         {
-            if (id != order.Id)
-            {
-                return BadRequest();
-            }
+            
+            var updateOrder = _IorderRepository.UpdateOrderById(id, order);
+            return Ok(updateOrder);
 
-            _context.Entry(order).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OrderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
 
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        public IActionResult PostOrder(OrderNoIdDTO order)
         {
-            if (_context.Orders == null)
-            {
-                return Problem("Entity set 'BooklibraryContext.Orders'  is null.");
-            }
-            _context.Orders.Add(order);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (OrderExists(order.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetOrder", new { id = order.Id }, order);
+            var addOrder = _IorderRepository.AddOrder( order);
+            return Ok(addOrder);
         }
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
         
-        public async Task<IActionResult> DeleteOrder(int id)
+        public IActionResult DeleteOrder(int id)
         {
-            if (_context.Orders == null)
-            {
-                return NotFound();
-            }
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            _context.Orders.Remove(order);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var deletedOrder = _IorderRepository.DeleteBookById(id);
+            return Ok(deletedOrder);
         }
         [HttpGet("GetOrdersByUserId/{userId}")]
-        public ActionResult<IEnumerable<Order>> GetOrdersByUserId(int userId)
-        {
-            List<Order> orders = _context.Orders
-                .Include(o => o.OrderDetails)
-                .Where(o => o.UserId == userId)
-                .ToList();
-
-            if (orders == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(orders);
-        }
         private bool OrderExists(int id)
         {
             return (_context.Orders?.Any(e => e.Id == id)).GetValueOrDefault();
