@@ -21,7 +21,7 @@ namespace BookLibraryAPI.Controllers
             _context = dbContext;
             _productRepository = productRepository;
         }
-        [HttpGet("get-all-Product")]
+        [HttpGet()]
         public IActionResult GetAll()
         {
             // su dung reposity pattern 
@@ -29,25 +29,25 @@ namespace BookLibraryAPI.Controllers
             return Ok(allproducts);
         }
         [HttpGet]
-        [Route("get-product-by-id/{id}")]
+        [Route("{id}")]
         public IActionResult GetBookById([FromRoute] int id)
         {
             var productWithDTO = _productRepository.GetProductById(id);
             return Ok(productWithDTO);
         }
-        [HttpPost("Add Product")]
+        [HttpPost()]
         public IActionResult AddBook([FromBody] AddProductDTO addproductRequestDTO)
         {
             var productAdd = _productRepository.AddProduct(addproductRequestDTO);
             return Ok(productAdd);
         }
-        [HttpPut("update-Product-by-id/{id}")]
+        [HttpPut("{id}")]
         public IActionResult UpdateBookById(int id, [FromBody] AddProductDTO productDTO)
         {
             var updateProduct = _productRepository.UpdateProductById(id, productDTO);
             return Ok(productDTO);
         }
-        [HttpDelete("delete-Product-by-id/{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteBookById(int id)
         {
             var deleteProduct = _productRepository.DeleteProductById(id);
