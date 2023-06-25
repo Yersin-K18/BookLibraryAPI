@@ -8,8 +8,8 @@ namespace BookLibraryAPI.Repositories
     {
         Task<OrderDetailDTO> GetById(int id);
         void Add(OrderDetailNoIdDTO orderDetail);
-        void Update(OrderDetailNoIdDTO orderDetail);
-        void Delete(int id);
+        void Update(int id, OrderDetailNoIdDTO orderDetail);
+        void Delete(OrderDetail item);
     }
 
     public class OrderDetailRepository : IOrderDetailRepository
@@ -55,14 +55,27 @@ namespace BookLibraryAPI.Repositories
             return;
         }
 
-        public void Update(OrderDetailNoIdDTO orderDetail)
+        public void Update(int id, OrderDetailNoIdDTO orderDetail)
         {
+            var result = _booklibraryContext.OrderDetails.FirstOrDefault(c => c.Id == id);
 
+            if (result != null)
+            {
+                result.OrderId = orderDetail.OrderId;
+                result.ProductId = orderDetail.ProductId;
+                result.UnitPrice = orderDetail.UnitPrice;
+                result.Quantity = orderDetail.Quantity;
+                _booklibraryContext.SaveChanges();
+            }
         }
 
-        public void Delete(int id)
+        public void Delete(OrderDetail item)
         {
-
+            if (item != null)
+            {
+                _booklibraryContext.OrderDetails.Remove(item);
+                _booklibraryContext.SaveChanges();
+            }
         }
     }
 }

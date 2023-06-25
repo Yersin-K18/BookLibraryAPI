@@ -52,32 +52,18 @@ namespace BookLibraryAPI.Controllers
         // PUT: api/OrderDetails/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderDetail(int id, OrderDetail orderDetail)
+        public async Task<IActionResult> PutOrderDetail(int id, OrderDetailNoIdDTO orderDetail)
         {
-            if (id != orderDetail.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(orderDetail).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                _orderDetailRepository.Update(id, orderDetail);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderDetailExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return NoContent();
+            return Ok(orderDetail);
         }
 
         // POST: api/OrderDetails
@@ -115,10 +101,10 @@ namespace BookLibraryAPI.Controllers
                 return NotFound();
             }
 
-            _context.OrderDetails.Remove(orderDetail);
+            _orderDetailRepository.Delete(orderDetail);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool OrderDetailExists(int id)
