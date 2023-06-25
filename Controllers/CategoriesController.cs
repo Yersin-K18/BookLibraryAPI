@@ -21,7 +21,7 @@ namespace BookLibraryAPI.Controllers
         }
 
         // GET: api/Categories
-        [HttpGet("get-all-category")]
+        [HttpGet()]
         public IActionResult GetAllCategory()
         {
             var categories = _categoryRepository.GetAllCategories();
@@ -29,7 +29,7 @@ namespace BookLibraryAPI.Controllers
         }
 
         // GET: api/Categories/5
-        [HttpGet("category-by-id/{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetCategoryById(int id)
         {
             var categoryWithId = _categoryRepository.GetCategoryById(id); 
@@ -39,7 +39,7 @@ namespace BookLibraryAPI.Controllers
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("update-category-by/{id}")]
+        [HttpPut("{id}")]
         public IActionResult UpdateCategoryById(int id, CategoriesNoIdDTO category)
         {
             var categoryUpdate = _categoryRepository.UpdateCategoryById(id, category);
@@ -49,7 +49,7 @@ namespace BookLibraryAPI.Controllers
 
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("add-category")]
+        [HttpPost()]
         public IActionResult AddCategory(AddCategoriesRequestDTO addCategoryRequestDTO)
         {
             var addCategory = _categoryRepository.AddCategory(addCategoryRequestDTO);
