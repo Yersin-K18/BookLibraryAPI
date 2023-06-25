@@ -38,8 +38,21 @@ namespace BookLibraryAPI.Controllers
         [HttpPost()]
         public IActionResult AddBook([FromBody] AddProductRequestDTO addproductRequestDTO)
         {
-            var productAdd = _productRepository.AddProduct(addproductRequestDTO);
-            return Ok(productAdd);
+            try
+            {
+                if (!ValidateAddProduct(addproductRequestDTO))
+                {
+                    return BadRequest(ModelState);
+                }
+                if (ModelState.IsValid)
+                {
+                    var productAdd = _productRepository.AddProduct(addproductRequestDTO);
+                    return Ok(productAdd);
+                }
+                else return BadRequest(ModelState);
+            }
+            catch (Exception e) { return BadRequest(e); }
+            
         }
         [HttpPut("{id}")]
         public IActionResult UpdateBookById(int id, [FromBody] AddProductRequestDTO productDTO)
@@ -71,5 +84,49 @@ namespace BookLibraryAPI.Controllers
                 .Take(number)
                 .ToListAsync();
         }
+        #region Private methods
+        private bool ValidateAddProduct(AddProductRequestDTO product)
+        {
+            if (product == null)
+            {
+                ModelState.AddModelError(nameof(product), $"Please add book data");
+
+
+                return false;
+            }
+            // kiem tra Description NotNull
+            if (string.IsNullOrEmpty(product.Description))
+            {
+                ModelState.AddModelError(nameof(product.Description),
+                $"{nameof(product.Description)} cannot be null");
+            }
+
+            if (string.IsNullOrEmpty(product.Name))
+            {
+                ModelState.AddModelError(nameof(product.Name),
+                $"{nameof(product.Name)} cannot be null");
+            }
+            if (string.IsNullOrEmpty(product.Image))
+            {
+                ModelState.AddModelError(nameof(product.Image),
+                $"{nameof(product.Image)} cannot be null");
+            }
+            if (product.Price == 0)
+            {
+                ModelState.AddModelError(nameof(product.Price),
+                $"{nameof(product.Price)} cannot be null");
+            }
+            if (product.Quantity == 0)
+            {
+                ModelState.AddModelError(nameof(product.Quantity),
+                $"{nameof(product.Quantity)} cannot be null");
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
     }
 }
