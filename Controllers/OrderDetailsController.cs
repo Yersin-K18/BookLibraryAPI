@@ -1,6 +1,7 @@
 ﻿using BookLibraryAPI.Data;
 using BookLibraryAPI.Models;
-using Microsoft.AspNetCore.Authorization;
+using BookLibraryAPI.Models.DTO;
+using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,15 +12,16 @@ namespace BookLibraryAPI.Controllers
     public class OrderDetailsController : ControllerBase
     {
         private readonly BooklibraryContext _context;
+        private readonly IOrderDetailRepository _orderDetailRepository;
 
-        public OrderDetailsController(BooklibraryContext context)
+        public OrderDetailsController(BooklibraryContext context, IOrderDetailRepository orderDetailRepository)
         {
             _context = context;
+            _orderDetailRepository = orderDetailRepository;
         }
 
         // GET: api/OrderDetails
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<OrderDetail>>> GetOrderDetails()
         {
             if (_context.OrderDetails == null)
@@ -31,14 +33,13 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/OrderDetails/5
         [HttpGet("{id}")]
-        [Authorize]
-        public async Task<ActionResult<OrderDetail>> GetOrderDetail(int id)
+        public async Task<ActionResult<OrderDetailDTO>> GetOrderDetail(int id)
         {
             if (_context.OrderDetails == null)
             {
                 return NotFound();
             }
-            var orderDetail = await _context.OrderDetails.FindAsync(id);
+            var orderDetail = await _orderDetailRepository.GetById(id);
 
             if (orderDetail == null)
             {
@@ -51,7 +52,6 @@ namespace BookLibraryAPI.Controllers
         // PUT: api/OrderDetails/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> PutOrderDetail(int id, OrderDetail orderDetail)
         {
             if (id != orderDetail.Id)
@@ -83,36 +83,26 @@ namespace BookLibraryAPI.Controllers
         // POST: api/OrderDetails
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
-        public async Task<ActionResult<OrderDetail>> PostOrderDetail(OrderDetail orderDetail)
+        public async Task<IActionResult> PostOrderDetail(OrderDetailNoIdDTO orderDetail)
         {
             if (_context.OrderDetails == null)
             {
                 return Problem("Entity set 'BooklibraryContext.OrderDetails'  is null.");
             }
-            _context.OrderDetails.Add(orderDetail);
             try
             {
-                await _context.SaveChangesAsync();
+                _orderDetailRepository.Add(orderDetail);
             }
             catch (DbUpdateException)
             {
-                if (OrderDetailExists(orderDetail.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
-            return CreatedAtAction("GetOrderDetail", new { id = orderDetail.Id }, orderDetail);
+            return Ok(orderDetail);
         }
 
         // DELETE: api/OrderDetails/5
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteOrderDetail(int id)
         {
             if (_context.OrderDetails == null)

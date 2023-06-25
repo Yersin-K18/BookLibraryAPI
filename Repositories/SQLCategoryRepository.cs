@@ -15,9 +15,10 @@ namespace BookLibraryAPI.Repositories
         }
         public AddCategoriesRequestDTO AddCategory(AddCategoriesRequestDTO addCategoryRequestDTO)
         {
-            var categoryModel = new Category { 
+            var categoryModel = new Category
+            {
                 Name = addCategoryRequestDTO.Name,
-                Tag = addCategoryRequestDTO.Tag,       
+                Tag = addCategoryRequestDTO.Tag,
             };
 
             _booklibraryContext.Categories.Add(categoryModel);
@@ -27,7 +28,7 @@ namespace BookLibraryAPI.Repositories
 
         public Category DeleteCategoryById(int id)
         {
-           var CategoryDomain = _booklibraryContext.Categories.FirstOrDefault(c => c.Id == id);
+            var CategoryDomain = _booklibraryContext.Categories.FirstOrDefault(c => c.Id == id);
             if (CategoryDomain != null)
             {
                 _booklibraryContext.Categories.Remove(CategoryDomain);
@@ -50,7 +51,7 @@ namespace BookLibraryAPI.Repositories
 
         public CategoriesDTO GetCategoryById(int id)
         {
-            var categoryWithDomain = _booklibraryContext.Categories          
+            var categoryWithDomain = _booklibraryContext.Categories
             .FirstOrDefault(n => n.Id == id);
 
             var categoryIdDTO = new CategoriesDTO()
@@ -58,7 +59,7 @@ namespace BookLibraryAPI.Repositories
                 Id = categoryWithDomain.Id,
                 Name = categoryWithDomain.Name,
                 Tag = categoryWithDomain.Tag,
-                ProductNames = categoryWithDomain.Products.Select(n=>n.Name).ToList(),
+                ProductNames = categoryWithDomain.Products.Select(n => n.Name).ToList(),
             };
             return categoryIdDTO;
         }
@@ -67,7 +68,7 @@ namespace BookLibraryAPI.Repositories
         {
             var categoryDomain = _booklibraryContext.Categories.FirstOrDefault(c => c.Id == id);
 
-            if(categoryDomain != null)
+            if (categoryDomain != null)
             {
                 categoryDomain.Name = categoryDTO.Name;
                 categoryDomain.Tag = categoryDTO.Tag;
