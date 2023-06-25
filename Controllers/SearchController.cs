@@ -37,5 +37,17 @@ namespace BookLibraryAPI.Controllers
             }    
             return Ok(searchResults);
         }
+        [HttpGet("productbycategory")]
+        public IActionResult GetProductsByCategory(string category)
+        {
+            var searchResults = _context.Products
+           .Where(p => p.Categorie.Name.Contains(category) || p.Categorie.Tag.Contains(category))
+            .ToList();
+            if (searchResults.Count == 0)
+            {
+                return NotFound("Không tìm thấy sản phẩm ");
+            }
+            return Ok(searchResults);
+        }
     }
 }
