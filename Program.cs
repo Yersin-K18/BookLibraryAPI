@@ -1,5 +1,4 @@
 using BookLibraryAPI.Data;
-using BookLibraryAPI.Models;
 using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +21,7 @@ builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IAuthorRepository,AuthorRepository>();
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Book")
     .AddEntityFrameworkStores<BookAuthDbContext>()
