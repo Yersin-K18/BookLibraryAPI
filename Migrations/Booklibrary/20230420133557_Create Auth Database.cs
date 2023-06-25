@@ -57,7 +57,7 @@ namespace BookLibraryAPI.Migrations.Booklibrary
                 name: "User",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false),
+                    id = table.Column<int>(type: "int", nullable: false).Annotation("SqlServer:Identity", "1, 1"),
                     username = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     password = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)

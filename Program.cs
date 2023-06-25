@@ -9,10 +9,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
+// Add serveces to controllers
 builder.Services.AddControllers();
 
+// Add services to the container.
+
+builder.Services.AddScoped<IUserRepository, SQLUserRepository>();
 builder.Services.AddScoped<ICategoryRepository, SQLCategoryRepository>();
 builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

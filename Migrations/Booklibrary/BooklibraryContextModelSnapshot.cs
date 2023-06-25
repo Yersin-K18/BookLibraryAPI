@@ -16,7 +16,7 @@ namespace BookLibraryAPI.Migrations.Booklibrary
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "7.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("BookLibraryAPI.Models.Author", b =>

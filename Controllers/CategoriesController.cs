@@ -1,4 +1,4 @@
-﻿using BookLibraryAPI.Data;
+using BookLibraryAPI.Data;
 using BookLibraryAPI.Models;
 using BookLibraryAPI.Models.DTO;
 using BookLibraryAPI.Repositories;

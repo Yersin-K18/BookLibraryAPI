@@ -1,5 +1,6 @@
-﻿using BookLibraryAPI.Data;
+using BookLibraryAPI.Data;
 using BookLibraryAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using BookLibraryAPI.Models.DTO;
 using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
