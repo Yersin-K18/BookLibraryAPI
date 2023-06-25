@@ -8,7 +8,7 @@
 
         public string? Tag { get; set; }
 
-        public virtual ICollection<Product>? Products { get; set; } = new List<Product>();
+        public List<string>? ProductNames { get; set; }
     }
     public class CategoriesNoIdDTO
     {
@@ -16,7 +16,7 @@
 
         public string? Tag { get; set; }
 
-        public virtual ICollection<Product>? Products { get; set; } = new List<Product>();
+        
     }
     public class AddCategoriesRequestDTO
     {

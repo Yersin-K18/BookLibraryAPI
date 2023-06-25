@@ -43,15 +43,14 @@ namespace BookLibraryAPI.Repositories
                 Id = Category.Id,
                 Name = Category.Name,
                 Tag = Category.Tag,
-                Products = Category.Products
+                ProductNames = Category.Products.Select(n => n.Name).ToList()
             }).ToList();
             return allCategoriesDomain;
         }
 
         public CategoriesDTO GetCategoryById(int id)
         {
-            var categoryWithDomain = _booklibraryContext.Categories
-            .Include(c => c.Products)
+            var categoryWithDomain = _booklibraryContext.Categories          
             .FirstOrDefault(n => n.Id == id);
 
             var categoryIdDTO = new CategoriesDTO()
@@ -59,7 +58,7 @@ namespace BookLibraryAPI.Repositories
                 Id = categoryWithDomain.Id,
                 Name = categoryWithDomain.Name,
                 Tag = categoryWithDomain.Tag,
-                Products = categoryWithDomain.Products
+                ProductNames = categoryWithDomain.Products.Select(n=>n.Name).ToList(),
             };
             return categoryIdDTO;
         }
