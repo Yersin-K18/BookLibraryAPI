@@ -1,10 +1,10 @@
 using BookLibraryAPI.Data;
-using BookLibraryAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using BookLibraryAPI.Models.DTO;
 using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using BookLibraryAPI.Models.Domain;
 
 namespace BookLibraryAPI.Controllers
 {

@@ -1,5 +1,5 @@
 using BookLibraryAPI.Data;
-using BookLibraryAPI.Models;
+using BookLibraryAPI.Models.Domain;
 using BookLibraryAPI.Models.DTO;
 using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
