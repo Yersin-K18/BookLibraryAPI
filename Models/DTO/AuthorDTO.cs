@@ -1,4 +1,6 @@
-﻿namespace BookLibraryAPI.Models.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BookLibraryAPI.Models.DTO
 {
     public class AuthorDTO
     {
@@ -31,12 +33,10 @@
     }
     public class AddAuthorRequestDTO
     {
-        
-
         public string? Name { get; set; }
-
+     
         public string? Nickname { get; set; }
-
+        
         public string? Description { get; set; }
 
         public string? Image { get; set; }
