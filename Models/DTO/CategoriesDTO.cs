@@ -15,8 +15,6 @@
         public string Name { get; set; } = null!;
 
         public string? Tag { get; set; }
-
-        
     }
     public class AddCategoriesRequestDTO
     {
