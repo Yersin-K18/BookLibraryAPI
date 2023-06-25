@@ -110,9 +110,17 @@ namespace BookLibraryAPI.Controllers
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Logout successfully." });
         }
-
-        [HttpGet]
-        [Authorize(Roles = "Write")]
+        [HttpGet("TestLogin")]
+        [Authorize]
+        public IActionResult TestLogin()
+        {
+            return Ok(new
+            {
+                message = "You logged"
+            });
+        }
+        [HttpGet("GiveRole")]
+        [Authorize]
         public async Task<IActionResult> GiveRole(string id, string role)
         {
             IdentityUser? user = await _userManager.FindByIdAsync(id);
@@ -142,6 +150,15 @@ namespace BookLibraryAPI.Controllers
             return Ok(new
             {
                 message = id + " has been added to " + role
+            });
+        }
+        [HttpGet("TestRoleWrite")]
+        [Authorize(Roles = "Write")]
+        public IActionResult TestRoleWrite()
+        {
+            return Ok(new
+            {
+                message = "You have Write role"
             });
         }
     }
