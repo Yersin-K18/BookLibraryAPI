@@ -15,6 +15,7 @@ namespace BookLibraryAPI.Repositories
         {
             var AuthorModels = new Author
             {
+               
                 Name = addAuthorDTO.Name,
                 Nickname= addAuthorDTO.Nickname,
                 BooksPublished= addAuthorDTO.BooksPublished,
@@ -49,6 +50,7 @@ namespace BookLibraryAPI.Repositories
             {
                 allAuthorDTO.Add(new AuthorDTO()
                 {
+                    Id = authorModels.Id,
                     Name = authorModels.Name,
                     Nickname = authorModels.Nickname,
                     BooksPublished = authorModels.BooksPublished,
