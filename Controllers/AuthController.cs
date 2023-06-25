@@ -1,8 +1,8 @@
 ﻿using BookLibraryAPI.Models;
+using BookLibraryAPI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Project;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -73,34 +73,31 @@ namespace BookLibraryAPI.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            var identityUser = new IdentityUser 
-            { 
-                
+            var identityUser = new IdentityUser
+            {
+
                 UserName = model.UserName,
                 Email = model.Email,
                 PhoneNumber = model.Phone
-                
+
             };
             var identityResult = await _userManager.CreateAsync(identityUser, model.Password);
 
-            
-                //add roles to this user
+            //add roles to this user
+            await Email.SendMail(model.Email, "Welcome to Book Library", "You have been registered successfully!");
 
+            //end add roles
 
-                //end add roles
+            if (identityResult.Succeeded)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
 
-                if (identityResult.Succeeded)
+                return Ok(new
                 {
-                    var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);  
-                
-                    return Ok(new
-                        {
-                             message = "Halo " + model.UserName,
-                             token = this.GetToken(model.UserName)
-                         });
-                                   
-                
-                }
+                    message = "Halo " + model.UserName,
+                    token = this.GetToken(model.UserName)
+                });
+            }
             // If the ModelState is invalid, return a BadRequest response with the errors
             var modelErrors = ModelState.Values.SelectMany(v => v.Errors)
                                                 .Select(e => e.ErrorMessage);
