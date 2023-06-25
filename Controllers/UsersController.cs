@@ -19,7 +19,7 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/Users
         [HttpGet]
-        [Authorize(Roles = "Write")]
+        
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             if (_context.Users == null)
@@ -31,7 +31,7 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        [Authorize]
+        
         public async Task<ActionResult<User>> GetUser(int id)
         {
             if (_context.Users == null)
@@ -82,7 +82,7 @@ namespace BookLibraryAPI.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
+        
         public async Task<ActionResult<User>> PostUser(User user)
         {
             if (_context.Users == null)
@@ -111,7 +111,7 @@ namespace BookLibraryAPI.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        [Authorize]
+        
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (_context.Users == null)
