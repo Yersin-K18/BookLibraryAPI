@@ -30,7 +30,6 @@ namespace BookLibraryAPI.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        [Authorize]
         public IActionResult GetUserById(int id)
         {
             var userWirhIdDTO = _userRepository.GetUserById(id);
@@ -39,7 +38,7 @@ namespace BookLibraryAPI.Controllers
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("update-user-by-id/{id}")]
+        [HttpPut("{id}")]
         public IActionResult UpdateUserById(int id, UserNoIdDTO userDTO)
         {
             var updateUser = _userRepository.UpdateUserById(id, userDTO);
@@ -50,8 +49,7 @@ namespace BookLibraryAPI.Controllers
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("add-user")]
-        [Authorize]
+        [HttpPost()]
         public IActionResult AddUser(UserNoIdDTO userDTO)
         {
             var addUser = _userRepository.AddUser(userDTO);
@@ -59,8 +57,7 @@ namespace BookLibraryAPI.Controllers
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("delete-user-by-id/{id}")]
-        [Authorize]
+        [HttpDelete("{id}")]
         public IActionResult DeleteUserById(int id)
         {
             var deleteUser = _userRepository.DeleteById(id);
