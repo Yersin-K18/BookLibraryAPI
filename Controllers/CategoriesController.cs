@@ -1,5 +1,6 @@
 using BookLibraryAPI.Data;
 using BookLibraryAPI.Models;
+using BookLibraryAPI.Models.Domain;
 using BookLibraryAPI.Models.DTO;
 using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -52,8 +53,21 @@ namespace BookLibraryAPI.Controllers
         [HttpPost()]
         public IActionResult AddCategory(AddCategoriesRequestDTO addCategoryRequestDTO)
         {
-            var addCategory = _categoryRepository.AddCategory(addCategoryRequestDTO);
-            return Ok(addCategory);
+            
+            try
+            {
+                if (!ValidateAddCategory(addCategoryRequestDTO))
+                {
+                    return BadRequest(ModelState);
+                }
+                if (ModelState.IsValid)
+                {
+                    var addCategory = _categoryRepository.AddCategory(addCategoryRequestDTO);
+                    return Ok(addCategory);
+                }
+                else return BadRequest(ModelState);
+            }
+            catch (Exception e) { return BadRequest(e); }
         }
 
         // DELETE: api/Categories/5
@@ -64,9 +78,34 @@ namespace BookLibraryAPI.Controllers
             return Ok(CategoryisDeteled);
         }
 
-        private bool CategoryExists(int id)
+        #region Private methods
+        private bool ValidateAddCategory(AddCategoriesRequestDTO category)
         {
-            return (_context.Categories?.Any(e => e.Id == id)).GetValueOrDefault();
+            if (category == null)
+            {
+                ModelState.AddModelError(nameof(category), $"Please add category");
+
+
+                return false;
+            }
+            // kiem tra Description NotNull
+            if (string.IsNullOrEmpty(category.Name  ))
+            {
+                ModelState.AddModelError(nameof(category.Name),
+                $"{nameof(category.Name)} cannot be null");
+            }
+
+            if (string.IsNullOrEmpty(category.Tag))
+            {
+                ModelState.AddModelError(nameof(category.Tag),
+                $"{nameof(category.Tag)} cannot be null");
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+            return true;
         }
+        #endregion
     }
 }
