@@ -72,19 +72,15 @@ namespace BookLibraryAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostOrderDetail(OrderDetailNoIdDTO orderDetail)
         {
-            if (_context.OrderDetails == null)
-            {
-                return Problem("Entity set 'BooklibraryContext.OrderDetails'  is null.");
-            }
-            try
-            {
-                _orderDetailRepository.Add(orderDetail);
-            }
-            catch (DbUpdateException)
-            {
-                throw;
-            }
-
+                if (!ValidateAddOrderdetail(orderDetail))
+                {
+                    return BadRequest(ModelState);
+                }
+                if (ModelState.IsValid)
+                {
+                    _orderDetailRepository.Add(orderDetail);
+                }
+                else return BadRequest(ModelState);
             return Ok(orderDetail);
         }
 
@@ -112,5 +108,35 @@ namespace BookLibraryAPI.Controllers
         {
             return (_context.OrderDetails?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        #region Private methods
+        private bool ValidateAddOrderdetail(OrderDetailNoIdDTO orderdetai)
+        {
+            if (orderdetai == null)
+            {
+                ModelState.AddModelError(nameof(orderdetai), $"Please add info Orderdetail");
+                return false;
+            }
+            // kiem tra Description NotNull
+            if (orderdetai.OrderId == 0)
+            {
+                ModelState.AddModelError(nameof(orderdetai.OrderId), $"{nameof(orderdetai.OrderId)} cannot be null or zero");
+            }
+            if (orderdetai.ProductId == 0)
+            {
+                ModelState.AddModelError(nameof(orderdetai.ProductId), $"{nameof(orderdetai.ProductId)} cannot be null or zero");
+            }
+            if (orderdetai.Quantity == 0)
+            {
+                ModelState.AddModelError(nameof(orderdetai.Quantity),
+                $"{nameof(orderdetai.Quantity)} cannot be null");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
     }
 }
