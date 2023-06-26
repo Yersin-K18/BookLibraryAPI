@@ -86,6 +86,8 @@ namespace BookLibraryAPI.Controllers
 
         // DELETE: api/OrderDetails/5
         [HttpDelete("{id}")]
+        [Authorize]
+
         public async Task<IActionResult> DeleteOrderDetail(int id)
         {
             if (_context.OrderDetails == null)

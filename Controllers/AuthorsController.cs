@@ -74,6 +74,7 @@ namespace BookLibraryAPI.Controllers
 
         // DELETE: api/Authors/5
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult DeleteAuthor(int id)
         {
             var AuthorById = _authorRepository.DeleteAuthorById(id);
