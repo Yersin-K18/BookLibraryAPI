@@ -72,21 +72,6 @@ namespace BookLibraryAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostOrderDetail(OrderDetailNoIdDTO orderDetail)
         {
-            //if (_context.OrderDetails == null)
-            //{
-            //    return Problem("Entity set 'BooklibraryContext.OrderDetails'  is null.");
-            //}
-            //try
-            //{
-            //    _orderDetailRepository.Add(orderDetail);
-            //}
-            //catch (DbUpdateException)
-            //{
-            //    throw;
-            //}
-
-            //return Ok(orderDetail);
-            
                 if (!ValidateAddOrderdetail(orderDetail))
                 {
                     return BadRequest(ModelState);
@@ -96,7 +81,7 @@ namespace BookLibraryAPI.Controllers
                     _orderDetailRepository.Add(orderDetail);
                 }
                 else return BadRequest(ModelState);
-           return Ok(orderDetail);
+            return Ok(orderDetail);
         }
 
         // DELETE: api/OrderDetails/5
