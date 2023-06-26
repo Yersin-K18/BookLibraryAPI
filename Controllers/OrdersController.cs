@@ -77,7 +77,9 @@ namespace BookLibraryAPI.Controllers
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
-        
+        [Authorize]
+
+
         public IActionResult DeleteOrder(int id)
         {
             var deletedOrder = _IorderRepository.DeleteBookById(id);

@@ -61,6 +61,8 @@ namespace BookLibraryAPI.Controllers
             return Ok(productDTO);
         }
         [HttpDelete("{id}")]
+        [Authorize]
+
         public IActionResult DeleteBookById(int id)
         {
             var deleteProduct = _productRepository.DeleteProductById(id);

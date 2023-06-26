@@ -72,6 +72,8 @@ namespace BookLibraryAPI.Controllers
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
+        [Authorize]
+
         public IActionResult DeleteCategoryById(int id)
         {
             var CategoryisDeteled = _categoryRepository.GetCategoryById(id);
