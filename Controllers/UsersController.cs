@@ -52,8 +52,21 @@ namespace BookLibraryAPI.Controllers
         [HttpPost()]
         public IActionResult AddUser(UserNoIdDTO userDTO)
         {
-            var addUser = _userRepository.AddUser(userDTO);
-            return Ok(addUser);
+            try
+            {
+                if (!ValidateAddUser(userDTO))
+                {
+                    return BadRequest(ModelState);
+                }
+                if (ModelState.IsValid)
+                {
+                    var addUser = _userRepository.AddUser(userDTO);
+                    return Ok(addUser);
+                }
+                else return BadRequest(ModelState);
+            }
+            catch (Exception e) { return BadRequest(e); }
+            
         }
 
         // DELETE: api/Users/5
@@ -70,5 +83,54 @@ namespace BookLibraryAPI.Controllers
         {
             return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        #region Private methods
+        private bool ValidateAddUser(UserNoIdDTO user)
+        {
+            if (user == null)
+            {
+                ModelState.AddModelError(nameof(user), $"Please add book data");
+
+
+                return false;
+            }
+            // kiem tra Description NotNull
+            if (string.IsNullOrEmpty(user.Username))
+            {
+                ModelState.AddModelError(nameof(user.Username),
+                $"{nameof(user.Username)} cannot be null");
+            }
+
+            if (string.IsNullOrEmpty(user.Password))
+            {
+                ModelState.AddModelError(nameof(user.Password),
+                $"{nameof(user.Password)} cannot be null");
+            }
+            if (string.IsNullOrEmpty(user.FullName))
+            {
+                ModelState.AddModelError(nameof(user.FullName),
+                $"{nameof(user.FullName)} cannot be null");
+            }
+            if (string.IsNullOrEmpty(user.Email))
+            {
+                ModelState.AddModelError(nameof(user.Email),
+                $"{nameof(user.Email)} cannot be null");
+            }
+            if (string.IsNullOrEmpty(user.Sdt))
+            {
+                ModelState.AddModelError(nameof(user.Sdt),
+                $"{nameof(user.Sdt)} cannot be null");
+            }
+            if (string.IsNullOrEmpty(user.DiaChi))
+            {
+                ModelState.AddModelError(nameof(user.DiaChi),
+                $"{nameof(user.DiaChi)} cannot be null");
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
     }
 }
