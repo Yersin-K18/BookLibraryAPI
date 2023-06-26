@@ -1,5 +1,6 @@
 ﻿using BookLibraryAPI.Data;
 using BookLibraryAPI.Models;
+using BookLibraryAPI.Models.Domain;
 using BookLibraryAPI.Models.DTO;
 using BookLibraryAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -57,8 +58,21 @@ namespace BookLibraryAPI.Controllers
         
         public IActionResult PostOrder(OrderNoIdDTO order)
         {
-            var addOrder = _IorderRepository.AddOrder( order);
-            return Ok(addOrder);
+            
+            try
+            {
+                if (!ValidateAddOrder(order))
+                {
+                    return BadRequest(ModelState);
+                }
+                if (ModelState.IsValid)
+                {
+                    var addOrder = _IorderRepository.AddOrder(order);
+                    return Ok(addOrder);
+                }
+                else return BadRequest(ModelState);
+            }
+            catch (Exception e) { return BadRequest(e); }
         }
 
         // DELETE: api/Orders/5
@@ -74,5 +88,42 @@ namespace BookLibraryAPI.Controllers
         {
             return (_context.Orders?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        #region Private methods
+        private bool ValidateAddOrder(OrderNoIdDTO order)
+        {
+            if (order == null)
+            {
+                ModelState.AddModelError(nameof(order), $"Please add book data");
+
+
+                return false;
+            }
+            // kiem tra Description NotNull
+            if (string.IsNullOrEmpty(order.Address))
+            {
+                ModelState.AddModelError(nameof(order.Address),
+                $"{nameof(order.Address)} cannot be null");
+            }
+            if (order.Discount == 0)
+            {
+                ModelState.AddModelError(nameof(order.Discount), $"{nameof(order.Discount)} cannot be null or zero");
+            }
+            if (order.UserId == 0)
+            {
+                ModelState.AddModelError(nameof(order.UserId), $"{nameof(order.UserId)} cannot be null or zero");
+            }
+            if (order.Total == 0)
+            {
+                ModelState.AddModelError(nameof(order.Total),
+                $"{nameof(order.Total)} cannot be null");
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
     }
 }
